@@ -749,3 +749,136 @@ plt.show()
 # Analysis (as comments):
 # For both networks, high degree removal (red) reduces the giant component faster than high clustering removal (blue).
 # Thus, degree is more sensitive topological information; protecting high-degree individuals limits damage best, as removing them fragments the network
+
+NETWORKX FUNCTIONS
+
+nx.barabasi_albert_graph(n, m) – Generates a Barabási–Albert scale-free network.
+nx.Graph() – Creates an empty undirected graph.
+G.add_nodes_from(nodes) – Adds multiple nodes.
+G.add_edges_from(edges) – Adds multiple edges.
+nx.spring_layout(G) – Positions nodes using force-directed layout.
+nx.draw(G, with_labels=True, node_size=300) – Simple graph visualization.
+nx.average_clustering(G) – Average clustering coefficient.
+nx.average_shortest_path_length(G) – Mean shortest path distance.
+G.degree() – Returns (node, degree) pairs.
+nx.degree_centrality(G) – Normalized degree centrality.
+nx.betweenness_centrality(G) – Bridge importance measure.
+nx.closeness_centrality(G) – Inverse of average distance to all nodes.
+nx.eigenvector_centrality(G) – Node influence via high-rank neighbors.
+nx.pagerank(G, alpha=0.85) – PageRank score.
+nx.bfs_tree(G, source) – Breadth-first traversal tree.
+nx.dfs_preorder_nodes(G, source) – Depth-first traversal order.
+nx.connected_components(G) – Lists connected node sets.
+nx.subgraph(G, nodes) – Induced subgraph for selected nodes.
+nx.degree_histogram(G) – Histogram of node degrees.
+nx.utils.powerlaw_sequence(n, exponent) – Generates power-law degree list.
+nx.expected_degree_graph(w) – Random graph with expected degree sequence.
+nx.number_connected_components(G) – Count of connected components.
+nx.is_connected(G) – Checks if entire network is connected.
+nx.node_connectivity(G) – Min nodes to disconnect graph.
+nx.edge_connectivity(G) – Min edges to disconnect graph.
+nx.transitivity(G) – Global clustering coefficient.
+nx.degree_assortativity_coefficient(G) – Degree correlation measure.
+nx.average_neighbor_degree(G) – Average degree of node neighbors.
+nx.shortest_path_length(G, source, target) – Path length between nodes.
+nx.laplacian_matrix(G) – Laplacian matrix (spectral analysis).
+nx.erdos_renyi_graph(n, p) – Random Erdős–Rényi network.
+nx.random_regular_graph(d, n) – d-regular random graph.
+nx.draw_spring(G) – Draws graph with spring layout.
+nx.draw_circular(G) – Circular node arrangement.
+nx.draw_spectral(G) – Spectral (Laplacian-based) layout.
+
+NUMPY FUNCTIONS
+
+np.array(obj) – Converts list to array.
+np.mean(a) – Average value.
+np.median(a) – Median of array.
+np.std(a) – Standard deviation.
+np.max(a) / np.min(a) – Max / Min value.
+np.random.choice(a, size, replace, p) – Random sampling.
+np.logspace(start, stop, num) – Log-spaced sequence.
+np.linspace(start, stop, num) – Evenly spaced sequence.
+
+MATPLOTLIB FUNCTIONS
+
+plt.figure(figsize) – Create new figure.
+plt.plot(x, y, style, label) – Draw line/scatter plot.
+plt.hist(x, bins) – Histogram (e.g. degree distribution).
+plt.loglog(x, y, 'o') – Log–log plot for scale-free check.
+plt.title(txt) – Add title.
+plt.xlabel(txt) / plt.ylabel(txt) – Axis labels.
+plt.axis('off') – Hide axes.
+plt.legend() – Show legend.
+plt.show() – Display figure.
+
+POWERLAW LIBRARY (BASIC)
+
+Fit(data, discrete=True) – Fit a power-law distribution.
+fit.power_law.alpha – Power-law exponent (γ).
+fit.power_law.xmin – Lower cutoff of power-law behavior.
+fit.distribution_compare(m1, m2) – Compare two model fits.
+
+ROBUSTNESS / ATTACK SIMULATION SNIPPETS
+
+Random Attack:
+removed = random.sample(G.nodes(), int(0.2*len(G)))
+G_copy = G.copy(); G_copy.remove_nodes_from(removed)
+
+Targeted Attack (High-Degree):
+deg = dict(G.degree())
+top = sorted(deg, key=deg.get, reverse=True)[:10]
+G.remove_nodes_from(top)
+
+Largest Component Size:
+lcc = max(nx.connected_components(G), key=len)
+ratio = len(lcc)/len(G)
+
+Connectivity Check:
+nx.is_connected(G)
+
+Path Length (largest CC):
+nx.average_shortest_path_length(G.subgraph(lcc))
+
+Robustness Plot:
+plt.plot(frac_removed, size_lcc)
+
+COMMON NETWORK METRICS
+
+Average Degree: np.mean([d for n,d in G.degree()])
+Clustering Coefficient: nx.average_clustering(G)
+Average Path Length: nx.average_shortest_path_length(G)
+Degree Centrality: nx.degree_centrality(G)
+Betweenness: nx.betweenness_centrality(G)
+Closeness: nx.closeness_centrality(G)
+Eigenvector: nx.eigenvector_centrality(G)
+PageRank: nx.pagerank(G)
+Transitivity: nx.transitivity(G)
+Assortativity: nx.degree_assortativity_coefficient(G)
+Laplacian Matrix: nx.laplacian_matrix(G)
+
+STANDARD LAB WORKFLOW (BA NETWORKS)
+
+Generate Network
+G = nx.barabasi_albert_graph(1000, 5)
+
+Visualize Network
+nx.draw(G, node_size=20, with_labels=False); plt.show()
+
+Compute Metrics
+nx.average_clustering(G), nx.average_shortest_path_length(G)
+
+Degree Distribution
+degrees = [d for n,d in G.degree()]; plt.hist(degrees, bins=30)
+
+Check Scale-Free Property
+fit = Fit(np.array(degrees)); print(fit.power_law.alpha)
+
+Simulate Attack
+G_new = G.copy(); G_new.remove_nodes_from(top_nodes)
+
+Compute Robustness
+lcc = max(nx.connected_components(G_new), key=len)
+ratio = len(lcc)/len(G_new)
+
+Plot Robustness Curve
+plt.plot(fraction_removed, largest_component_ratios)

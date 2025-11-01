@@ -16,6 +16,25 @@ print(help(nx.DiGraph()))
 print(dir(G))  # list of methods/attributes
 help(G.add_edge)
 
+#ba hardcoded
+m_ba=4
+flag=1
+if flag==1:
+        BA = nx.DiGraph()
+        BA.add_nodes_from(range(n))
+        # Start with a small clique (m_ba nodes, bidirectional)
+        for i in range(m_ba):
+            for j in range(i + 1, m_ba):
+                BA.add_edge(i, j)
+                BA.add_edge(j, i)
+        # Add remaining nodes with preferential attachment
+        for new_node in range(m_ba, n):
+            degrees = [BA.out_degree(i) for i in range(new_node)]
+            probs = [d / sum(degrees) if sum(degrees) > 0 else 1 / new_node for d in degrees]
+            targets = random.choices(range(new_node), weights=probs, k=m_ba)
+            for target in targets:
+                BA.add_edge(new_node, target)
+              
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
